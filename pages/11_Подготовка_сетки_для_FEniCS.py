@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import multiprocessing
 import plotly.graph_objects as go  # Для 3D-визуализации
+
 st.set_page_config(page_title="🗓", layout="wide")
 
 # Функция для отображения кода с возможностью копирования
@@ -27,14 +28,42 @@ def run_gmsh(file_path):
         st.error(f"Ошибка при запуске Gmsh: {e.returncode}")
         st.text(f"Вывод ошибки:\n{e.stderr}")
 
+# Добавляем новый раздел
 sections = {
+    "Что такое FEniCS?": "",
     "Поддерживаемые сеточные форматы": "",
-    "Пример подготовки сетки с граничными условиями": "",
 }
 
 choice = st.sidebar.radio("Выберите раздел", list(sections.keys()))
-    
-if choice == "Поддерживаемые сеточные форматы":
+
+if choice == "Что такое FEniCS?":
+    st.markdown("##### Что такое FEniCS?")
+    # Путь к папке, где находится текущий скрипт
+    script_dir = os.path.dirname(__file__)
+    image_path = os.path.join(script_dir, "FEniCS_logo.svg.png")
+
+    # Отображение с новым параметром
+    st.image(image_path, caption="Логотип FEniCS",  width=150)
+    st.write("""
+    **FEniCS** — это открытая платформа для автоматического решения дифференциальных уравнений методом конечных элементов (МКЭ). 
+    Она предоставляет высокоуровневый интерфейс (похожий на математическую запись уравнений) и автоматически генерирует эффективный код для решения задач.
+
+    ### Основные возможности:
+    - **Автоматизация**: Вы описываете уравнение в вариационной форме, а FEniCS сам строит конечные элементы, матрицы и решает систему.
+    - **Гибкость**: Поддерживает различные типы элементов, адаптивные сетки, нестационарные и нелинейные задачи.
+    - **Интеграция**: Легко связывается с генераторами сеток (например, **Gmsh**) и библиотеками для визуализации (ParaView).
+    - **Производительность**: Генерирует высокооптимизированный C++ код, но управляется через Python (или C++).
+
+    ### Типичное применение:
+    - Механика сплошных сред (деформации, напряжения).
+    - Вычислительная гидродинамика (течения жидкостей и газов).
+    - Электромагнетизм, теплоперенос, биологические модели и т.д.
+
+    ### Связь с Gmsh:
+    Gmsh часто используется для создания расчётных сеток, которые затем импортируются в FEniCS для проведения расчётов (как показано в других разделах).
+    """)
+
+elif choice == "Поддерживаемые сеточные форматы":
     st.markdown("##### Поддерживаемые сеточные форматы")
 
     with st.expander("1. Собственный формат FEniCS (XML)"):
@@ -57,7 +86,6 @@ if choice == "Поддерживаемые сеточные форматы":
             - **TetGen (.node, .ele)**
         """)
         st.code("dolfin-convert input_mesh.msh output_mesh.xml", language="bash")
-
 
     with st.expander("3. Формат XDMF"):
         st.write("""
@@ -101,34 +129,35 @@ if choice == "Поддерживаемые сеточные форматы":
         - Конвертировать сетку в формат `.xml` или `.xdmf` с помощью `meshio` или `dolfin-convert`.
         """)
 
-elif choice == "Пример подготовки сетки с граничными условиями":
-    st.markdown("##### Пример подготовки сетки с граничными условиями")
-    st.write("""
-    ```bash
-    import meshio
-
-    # Чтение .msh файла
-    mesh = meshio.read("mesh_with_bc.msh")
-    # Запись в .xdmf формат
-    meshio.write("mesh_with_bc.xdmf", mesh)
-    from fenics import *
-
-    # Загрузка сетки
-    mesh = Mesh()
-    with XDMFFile("mesh_with_bc.xdmf") as infile:
-        infile.read(mesh)
-
-    # Загрузка граничных меток
-    boundaries = MeshFunction("size_t", mesh, mesh.topology().dim() - 1)
-    with XDMFFile("mesh_with_bc_boundaries.xdmf") as infile:
-        infile.read(boundaries)
-
-    # Определение граничных условий
-    u_D = Constant(0.0)
-    bc = DirichletBC(V, u_D, boundaries, 1)  # 1 — идентификатор границы
-
-    # Визуализация граничных меток
-    plot(boundaries)
-    plt.title("Boundary Markers")
-    plt.show()
-              """)
+# elif choice == "Пример подготовки сетки с граничными условиями":
+#     st.markdown("##### Пример подготовки сетки с граничными условиями")
+#     st.write("""
+#     ```python
+#     import meshio
+#
+#     # Чтение .msh файла
+#     mesh = meshio.read("mesh_with_bc.msh")
+#     # Запись в .xdmf формат
+#     meshio.write("mesh_with_bc.xdmf", mesh)
+#
+#     from fenics import *
+#
+#     # Загрузка сетки
+#     mesh = Mesh()
+#     with XDMFFile("mesh_with_bc.xdmf") as infile:
+#         infile.read(mesh)
+#
+#     # Загрузка граничных меток
+#     boundaries = MeshFunction("size_t", mesh, mesh.topology().dim() - 1)
+#     with XDMFFile("mesh_with_bc_boundaries.xdmf") as infile:
+#         infile.read(boundaries)
+#
+#     # Определение граничных условий
+#     u_D = Constant(0.0)
+#     bc = DirichletBC(V, u_D, boundaries, 1)  # 1 — идентификатор границы
+#
+#     # Визуализация граничных меток
+#     plot(boundaries)
+#     plt.title("Boundary Markers")
+#     plt.show()
+#     """)
