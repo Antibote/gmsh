@@ -105,6 +105,6 @@ elif choice == "Пример":
         return example_file_path
 
     # Кнопка для загрузки и запуска примера
-    if st.button("Пример "):
+    ##if st.button("Пример "):
         example_file_path = save_example_file()
         run_gmsh(example_file_path)
