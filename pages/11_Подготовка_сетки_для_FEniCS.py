@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import multiprocessing
 import plotly.graph_objects as go  # Для 3D-визуализации
+
 st.set_page_config(page_title="🗓", layout="wide")
 
 # Функция для отображения кода с возможностью копирования
@@ -27,15 +28,42 @@ def run_gmsh(file_path):
         st.error(f"Ошибка при запуске Gmsh: {e.returncode}")
         st.text(f"Вывод ошибки:\n{e.stderr}")
 
+# Добавляем новый раздел
 sections = {
+    "Что такое FEniCS?": "",
     "Поддерживаемые сеточные форматы": "",
-    "Пример подготовки сетки с граничными условиями": "",
-    "Замечание": "",
 }
 
 choice = st.sidebar.radio("Выберите раздел", list(sections.keys()))
-    
-if choice == "Поддерживаемые сеточные форматы":
+
+if choice == "Что такое FEniCS?":
+    st.markdown("##### Что такое FEniCS?")
+    # Путь к папке, где находится текущий скрипт
+    script_dir = os.path.dirname(__file__)
+    image_path = os.path.join(script_dir, "FEniCS_logo.svg.png")
+
+    # Отображение с новым параметром
+    st.image(image_path, caption="Логотип FEniCS",  width=150)
+    st.write("""
+    **FEniCS** — это открытая платформа для автоматического решения дифференциальных уравнений методом конечных элементов (МКЭ). 
+    Она предоставляет высокоуровневый интерфейс (похожий на математическую запись уравнений) и автоматически генерирует эффективный код для решения задач.
+
+    ### Основные возможности:
+    - **Автоматизация**: Вы описываете уравнение в вариационной форме, а FEniCS сам строит конечные элементы, матрицы и решает систему.
+    - **Гибкость**: Поддерживает различные типы элементов, адаптивные сетки, нестационарные и нелинейные задачи.
+    - **Интеграция**: Легко связывается с генераторами сеток (например, **Gmsh**) и библиотеками для визуализации (ParaView).
+    - **Производительность**: Генерирует высокооптимизированный C++ код, но управляется через Python (или C++).
+
+    ### Типичное применение:
+    - Механика сплошных сред (деформации, напряжения).
+    - Вычислительная гидродинамика (течения жидкостей и газов).
+    - Электромагнетизм, теплоперенос, биологические модели и т.д.
+
+    ### Связь с Gmsh:
+    Gmsh часто используется для создания расчётных сеток, которые затем импортируются в FEniCS для проведения расчётов (как показано в других разделах).
+    """)
+
+elif choice == "Поддерживаемые сеточные форматы":
     st.markdown("##### Поддерживаемые сеточные форматы")
 
     with st.expander("1. Собственный формат FEniCS (XML)"):
@@ -59,25 +87,7 @@ if choice == "Поддерживаемые сеточные форматы":
         """)
         st.code("dolfin-convert input_mesh.msh output_mesh.xml", language="bash")
 
-    with st.expander("3. Форматы, поддерживаемые через meshio"):
-        st.write("""
-        Библиотека `meshio` поддерживает больше форматов и может использоваться для конвертации сеток в формат FEniCS.
-        - Поддерживаемые форматы:
-            - **Gmsh (.msh)**
-            - **VTK (.vtk, .vtu)**
-            - **XDMF (.xdmf)**
-            - **ABAQUS (.inp)**
-            - **COMSOL (.mphtxt)**
-            - **STL (.stl)**
-            - **MED (.med)**
-        """)
-        st.code("""
-        import meshio
-        mesh = meshio.read("input_mesh.msh")
-        meshio.write("output_mesh.xml", mesh)
-        """, language="python")
-
-    with st.expander("4. Формат XDMF"):
+    with st.expander("3. Формат XDMF"):
         st.write("""
         - XDMF (eXtensible Data Model and Format) поддерживает хранение сеток и данных.
         - Используется для больших сеток и параллельных вычислений.
@@ -91,7 +101,7 @@ if choice == "Поддерживаемые сеточные форматы":
             outfile.write(mesh)
         """, language="python")
 
-    with st.expander("5. Формат VTK"):
+    with st.expander("4. Формат VTK"):
         st.write("""
         - VTK (Visualization Toolkit) используется для визуализации данных.
         - FEniCS может экспортировать результаты в VTK для визуализации в ParaView.
@@ -104,7 +114,7 @@ if choice == "Поддерживаемые сеточные форматы":
         File("output.pvd") << u
         """, language="python")
 
-    with st.expander("6. Другие форматы"):
+    with st.expander("5. Другие форматы"):
         st.write("""
         - **HDF5**: используется для хранения больших данных и сеток.
         - **DOLFIN HDF5**: специальный формат для хранения сеток и данных в FEniCS.
@@ -115,46 +125,39 @@ if choice == "Поддерживаемые сеточные форматы":
         st.write("""
         - Для простых задач использовать XML-формат.
         - Для больших сеток и параллельных вычислений лучше подходят XDMF или HDF5.
-        - Для конвертации сеток из других форматов использовать `meshio`.
+        - Для подготовки сетки в FEniCS нужно использовать Gmsh, mshr или другие инструменты. 
+        - Конвертировать сетку в формат `.xml` или `.xdmf` с помощью `meshio` или `dolfin-convert`.
         """)
 
-elif choice == "Пример подготовки сетки с граничными условиями":
-    st.markdown("##### Пример подготовки сетки с граничными условиями")
-    st.write("""
-    ```bash
-    import meshio
-
-    # Чтение .msh файла
-    mesh = meshio.read("mesh_with_bc.msh")
-    # Запись в .xdmf формат
-    meshio.write("mesh_with_bc.xdmf", mesh)
-    from fenics import *
-
-    # Загрузка сетки
-    mesh = Mesh()
-    with XDMFFile("mesh_with_bc.xdmf") as infile:
-        infile.read(mesh)
-
-    # Загрузка граничных меток
-    boundaries = MeshFunction("size_t", mesh, mesh.topology().dim() - 1)
-    with XDMFFile("mesh_with_bc_boundaries.xdmf") as infile:
-        infile.read(boundaries)
-
-    # Определение граничных условий
-    u_D = Constant(0.0)
-    bc = DirichletBC(V, u_D, boundaries, 1)  # 1 — идентификатор границы
-
-    # Визуализация граничных меток
-    plot(boundaries)
-    plt.title("Boundary Markers")
-    plt.show()
-              """)
-    
-elif choice == "Замечание":
-    st.markdown("##### Замечание")
-    st.write("""
-
-    - Для подготовки сетки в FEniCS нужно использовать Gmsh, `mshr` или другие инструменты. 
-    - Конвертировать сетку в формат `.xml` или `.xdmf` с помощью `meshio` или `dolfin-convert`.
-    - Загрузить сетку в FEniCS и определить граничные условия с помощью физических групп.
-              """)
+# elif choice == "Пример подготовки сетки с граничными условиями":
+#     st.markdown("##### Пример подготовки сетки с граничными условиями")
+#     st.write("""
+#     ```python
+#     import meshio
+#
+#     # Чтение .msh файла
+#     mesh = meshio.read("mesh_with_bc.msh")
+#     # Запись в .xdmf формат
+#     meshio.write("mesh_with_bc.xdmf", mesh)
+#
+#     from fenics import *
+#
+#     # Загрузка сетки
+#     mesh = Mesh()
+#     with XDMFFile("mesh_with_bc.xdmf") as infile:
+#         infile.read(mesh)
+#
+#     # Загрузка граничных меток
+#     boundaries = MeshFunction("size_t", mesh, mesh.topology().dim() - 1)
+#     with XDMFFile("mesh_with_bc_boundaries.xdmf") as infile:
+#         infile.read(boundaries)
+#
+#     # Определение граничных условий
+#     u_D = Constant(0.0)
+#     bc = DirichletBC(V, u_D, boundaries, 1)  # 1 — идентификатор границы
+#
+#     # Визуализация граничных меток
+#     plot(boundaries)
+#     plt.title("Boundary Markers")
+#     plt.show()
+#     """)
