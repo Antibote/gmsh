@@ -41,7 +41,7 @@ if choice == "Общая характеристика ПО":
     st.write(
             """
             **Gmsh** — это открытое программное обеспечение для генерации конечных элементов (mesh generation).
-            Оно используется в численном моделировании и вычислительной механике, особенно в методе конечных элементов (FEM).
+            Оно используется в численном моделировании и вычислительной механике, особенно в методе конечных элементов (FEM)
             """
         )
     st.markdown("### Системные требования")
@@ -49,23 +49,23 @@ if choice == "Общая характеристика ПО":
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        st.info("**Windows**\n\nВерсия≥ 10\n\nНапример:\n\nWindows 10\n\nWindows11\n\nㅤ\n\nㅤ")
+        st.info("**Windows**\n\nВерсия ≥ 10\n\nНапример\n\nWindows 10\n\nWindows 11\n\nㅤ\n\nㅤ")
 
     with col2:
-        st.info("**Для дистрибутивов Linux,**\n\nиспользующих glibc ≥ 2.24\n\nНапример:\n\nUbuntu 17.04 и новее\n\nDebian 10 и новее\n\nFedora 26 и новее\n\nCentOS 8 и новее")
+        st.info("**Для дистрибутивов Linux**\n\nиспользующих glibc ≥ 2.24\n\nНапример\n\nUbuntu 17.04 и новее\n\nDebian 10 и новее\n\nFedora 26 и новее\n\nCentOS 8 и новее")
 
     with col3:
-        st.info("**macOS (Intel)**\n\nВерсия≥ 10.15\n\nНапример:\n\nmacOS 10.15 Catalina\n\nmacOS 11 Big Sur\n\nmacOS 12 Monterey и новее\n\nㅤ")
+        st.info("**macOS (Intel)**\n\nВерсия ≥ 10.15\n\nНапример\n\nmacOS 10.15 Catalina\n\nmacOS 11 Big Sur\n\nmacOS 12 Monterey и новее\n\nㅤ")
 
     with col4:
-        st.info("**macOS (Apple M)**\n\nВерсия≥ 12\n\nНапример:\n\nmacOS 12 Monterey\n\nmacOS 13 Ventura\n\nmacOS 14 Sonoma и новее\n\nㅤ")
+        st.info("**macOS (Apple M)**\n\nВерсия ≥ 12\n\nНапример\n\nmacOS 12 Monterey\n\nmacOS 13 Ventura\n\nmacOS 14 Sonoma и новее\n\nㅤ")
 
 elif choice == "Основные возможности Gmsh":
     st.write("""##### Основные возможности Gmsh""")
     st.markdown(
         """
         - Генерация двумерных и трехмерных сеток
-        - Поддержка различных типов элементов (треугольники, тетраэдры, гексаэдры и т. д.)
+        - Поддержка различных типов конечных элементов (треугольники, тетраэдры, гексаэдры и т. д.)
         - Встроенный язык сценариев (Gmsh scripting language)
         - Визуализация и постобработка
         - Импорт и экспорт в различные форматы (STEP, STL, MSH и др.)
